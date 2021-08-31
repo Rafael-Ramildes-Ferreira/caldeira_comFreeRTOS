@@ -62,10 +62,11 @@ void vTB(void *pvParameters)
         /*Sets*/
 
         send_set_message(SET_NI, ni);
-        console_print("SET_NI sent: %lf\n", ni);
+        console_print("SET_NI sent: %lf\n", 10);
 
-        if (receive_message(SET_NI, &read, COMMUNICATION_BLOCKING))
+        if (receive_message(SET_NI, &read, COMMUNICATION_BLOCKING)){
             console_print("SET_NI received: %lf\n", read);
+	}
 
         send_set_message(SET_Q, q);
         console_print("SET_Q sent: %lf\n", q);

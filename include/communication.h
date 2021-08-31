@@ -13,6 +13,7 @@
 #include <sys/socket.h>     // socket(), connect()
 #include <netinet/in.h>     // struct sockaddr_in
 #include <arpa/inet.h>      // htons(), inet_addr()
+#include <netdb.h>	    // gethostbyname()
 #include <unistd.h>         // close()
 #include <string.h>         // strlen()
 

@@ -36,7 +36,12 @@ void set_destination(char *address, uint32_t port)
     // Filling information to send msg
     send_addr.sin_family = AF_INET;
     send_addr.sin_port = htons(port);
-    send_addr.sin_addr.s_addr = inet_addr(address);
+    if((send_addr.sin_addr.s_addr = inet_addr(address)) == -1)
+    {
+	perror("Address creation failed!!");
+       	exit(EXIT_FAILURE);
+	
+    }
 
     xSemaphoreGive(xSocketMutex);
 }
@@ -85,13 +90,14 @@ int receive_message(char *token, double *read_value, char blocking)
     int n, len = sizeof(receive_addr);
     xSemaphoreTake(xSocketMutex, portMAX_DELAY);
 
+    int i = 0;
     do
     {
         n = recvfrom(sockfd, (char *)buffer, BUFFER_SIZE,
                      MSG_WAITALL, (struct sockaddr *)&receive_addr,
                      &len);
     } while ((blocking == COMMUNICATION_BLOCKING) && (n <= 0));
-
+	
     if (n > 0)
     {
         buffer[n] = '\0';
