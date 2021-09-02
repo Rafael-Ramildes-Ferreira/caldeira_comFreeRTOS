@@ -101,7 +101,6 @@ int receive_message(char *token, double *read_value, char blocking)
     if (n > 0)
     {
         buffer[n] = '\0';
-
         char *num_ptr;
         //verify if it has the token
         num_ptr = strstr(buffer, token);
