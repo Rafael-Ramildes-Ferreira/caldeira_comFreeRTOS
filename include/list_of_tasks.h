@@ -9,8 +9,5 @@
 
 void create_tasks();
 
-void vTA(void *pvParameters);
-
-void vTB(void *pvParameters);
 
 #endif

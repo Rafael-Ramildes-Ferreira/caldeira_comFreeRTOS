@@ -10,16 +10,17 @@
 #include "semphr.h"
 
 /* Local includes. */
-#include "console.h"
-#include "communication.h"
 #include "list_of_tasks.h"
+#include "console.h"
 #include "instrumentacao.h"
 
 
-#define TEMPO_TOTAL 3600
+#define TEMPO_TOTAL 3600	// Em segundos
 
-// Executa por uma hora (3600 s) então o loop ocorre 3600s/intervalo em segundos (espera intervalo em nano)
-#define executa_nano(intervalo) for(int index = 0;index<TEMPO_TOTAL/(intervalo*1e-9);index++)
+// Executa pelo TEMPO_TOTAL
+#define executa_nano(intervalo) for(int nano_index = 0;executa_nano_index<TEMPO_TOTAL/(intervalo*1e-9);nano_index++)
+// Executa pelo TEMPO_TOTAL
+#define executa_milli(intervalo) for(int milli_index = 0;milli_index<TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
 
 
 /*used to control*/
@@ -34,7 +35,6 @@ int S = 4184;			// 4184 J/KgC
 void controla_temperatura()
 {
 	console_print("Iniciou o ciclo de controle da temperatura\n");
-	int intervalo = 0.05e+9;	// 0.05s = 50ms = 50 000 000ns
 
 	/*  Variáveis do controle  */
 	// Parâmetros
@@ -51,7 +51,7 @@ void controla_temperatura()
 	xLastWakeTime = xTaskGetTickCount();
 
 
-	executa_nano(intervalo){
+	executa_milli(xTime){
         	vTaskDelayUntil(&xLastWakeTime, xTime);
 		
 		/*  Define a atuação  */
@@ -68,7 +68,6 @@ void controla_temperatura()
 void controla_nivel()
 {
 	console_print("Iniciou o ciclo de controle do nivel\n");
-	int intervalo = 0.07e+9; 	  // 0.07s = 70ms = 70 000 000ns
 
 	/*  Variáveis de controle  */
 	// Parâmetros
@@ -83,7 +82,7 @@ void controla_nivel()
 	xLastWakeTime = xTaskGetTickCount();
 
 
-	executa_nano(intervalo){
+	executa_milli(xTime){
         	vTaskDelayUntil(&xLastWakeTime, xTime);
 
 		/*  Define a atuação  */

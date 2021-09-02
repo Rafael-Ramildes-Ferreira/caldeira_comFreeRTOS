@@ -1,5 +1,5 @@
 CC := gcc
-BIN := Posix_Socket
+BIN := controladora
 
 BUILD_DIR := build
 
