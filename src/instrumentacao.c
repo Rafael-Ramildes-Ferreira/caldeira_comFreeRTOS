@@ -35,14 +35,14 @@ void init_vars()
 	Href.mutex = xSemaphoreCreateMutex();
 
 	/*  inicializa_atuadores  */
-	Q.mutex = xSemaphoreCreateMutex();
+	Q.mutex  = xSemaphoreCreateMutex();
 	Ni.mutex = xSemaphoreCreateMutex();
 	Nf.mutex = xSemaphoreCreateMutex();
 	Na.mutex = xSemaphoreCreateMutex();
 
 	/*  inicializa_sensores  */
-	T.mutex = xSemaphoreCreateMutex();
-	H.mutex = xSemaphoreCreateMutex();
+	T.mutex  = xSemaphoreCreateMutex();
+	H.mutex  = xSemaphoreCreateMutex();
 	No.mutex = xSemaphoreCreateMutex();
 	Ta.mutex = xSemaphoreCreateMutex();
 	Ti.mutex = xSemaphoreCreateMutex();

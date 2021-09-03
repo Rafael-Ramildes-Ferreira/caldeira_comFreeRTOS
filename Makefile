@@ -25,7 +25,7 @@ SOURCE_FILES += ${FREERTOS_DIR}/Source/portable/ThirdParty/GCC/Posix/port.c
 
 
 CFLAGS := -ggdb3 -O0
-LDFLAGS := -ggdb3 -O0 -pthread -lpcap
+LDFLAGS := -ggdb3 -O0 -pthread -lpcap -lm
 
 OBJ_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 

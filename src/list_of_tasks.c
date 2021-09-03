@@ -13,12 +13,11 @@
 #include "list_of_tasks.h"
 #include "console.h"
 #include "instrumentacao.h"
+#include "display.h"
 
 
 #define TEMPO_TOTAL 3600	// Em segundos
 
-// Executa pelo TEMPO_TOTAL
-#define executa_nano(intervalo) for(int nano_index = 0;executa_nano_index<TEMPO_TOTAL/(intervalo*1e-9);nano_index++)
 // Executa pelo TEMPO_TOTAL
 #define executa_milli(intervalo) for(int milli_index = 0;milli_index<TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
 
@@ -31,11 +30,35 @@ float R = 0.001;		// 0.001 Grau/(J/s)
 int S = 4184;			// 4184 J/KgC
 
 
+/*-----------  Sequências de impressão  ----------*/
+void imprime_dados()
+{
+	int index = 0;
+
+	/*  Imprime no terminal  */
+	inicializa_interface();
+	
+
+	/*  Prepara o relógio  */
+	TickType_t xLastWakeTime;
+	const TickType_t xTime= 1000;
+	xLastWakeTime = xTaskGetTickCount();
+
+
+	executa_milli(xTime){
+        	vTaskDelayUntil(&xLastWakeTime, xTime);
+
+		/*  Atualiza o terminal  */
+		atualiza_valores_da_tela(index++);
+
+	}
+
+	finalizar_programa();
+}
+
 /*-----------  Sequências de controle  ----------*/
 void controla_temperatura()
 {
-	console_print("Iniciou o ciclo de controle da temperatura\n");
-
 	/*  Variáveis do controle  */
 	// Parâmetros
 	double kp = 300000;		// Ganho proporcional
@@ -67,8 +90,6 @@ void controla_temperatura()
 
 void controla_nivel()
 {
-	console_print("Iniciou o ciclo de controle do nivel\n");
-
 	/*  Variáveis de controle  */
 	// Parâmetros
 	double kp = 50;
@@ -97,7 +118,6 @@ void controla_nivel()
 
 void create_tasks()
 {
-	console_print("Iniciando a criacao de tasks\n");
 	ni = .1;
 	q = .1;
 	na = .1;
@@ -106,5 +126,6 @@ void create_tasks()
 
 	xTaskCreate(&controla_nivel, "Controle de nivel", 1024, NULL, 1, NULL);
 	xTaskCreate(&controla_temperatura, "Controle de temperatura", 1024, NULL, 1, NULL);
+	xTaskCreate(&imprime_dados, "Imprime dados na tela", 1024, NULL, 1, NULL);
 }
 
