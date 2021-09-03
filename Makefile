@@ -43,16 +43,10 @@ ${BUILD_DIR}/${BIN} : ${OBJ_FILES}
 
 ${BUILD_DIR}/%.o : %.c
 	-mkdir -p $(@D)
-	echo
-	echo $(OBJ_FILES)
-	echo
 	$(CC) $(CFLAGS) ${INCLUDE_DIRS} -MMD -c $< -o $@
 
 ${BUILD_DIR}/%.o : $(FREERTOS_PATH)/%.c
 	-mkdir -p $(@D)
-	echo
-	echo $(OBJ_FILES)
-	echo
 	$(CC) $(CFLAGS) ${INCLUDE_DIRS} -MMD -c $< -o $@
 
 .PHONY: clean
