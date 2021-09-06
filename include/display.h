@@ -11,7 +11,7 @@ void inicializa_interface();
 
 void print_warning(int valor);
 
-void dont_print_warning();
+void erase_warning();
 
 void finalizar_programa();
 

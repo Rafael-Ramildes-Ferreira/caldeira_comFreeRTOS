@@ -104,19 +104,19 @@ void print_warning(int valor)
 	instrumentacao_mutex_lock(mutex_scr);
 	console_print("%s", ESC "[?25l");		// Cursor invisível
 	console_print("%s", ESC "[10A");		// Sobe 10 linhas
-	console_print("%s", ESC "[1m");		// Põe em negrito
+	console_print("%s", ESC "[1m");			// Põe em negrito
 	console_print("%s", ESC "[38;5;196m");		// Põe em vermelho
 	if(!finalizar){
 		console_print("%s", ESC "[K");		// Limpa a linha
 		console_print("#### WARNING: Temperatura Acima Do Limite Seguro: %d C. !!!!!!",valor);
 	}
-	console_print("%s", ESC "[0m");		// Reseta estilo da escrita
+	console_print("%s", ESC "[0m");			// Reseta estilo da escrita
 	console_print("\n\n\n\n\n\n\n\n\n\n");		// Desce todas as 10 linhas
 	console_print("%s", ESC "[?25h");		// Cursor visível
 	instrumentacao_mutex_unlock(mutex_scr);
 }
 
-void dont_print_warning()
+void erase_warning()
 {
 	instrumentacao_mutex_lock(mutex_scr);
 	console_print("%s", ESC "[?25l");		// Cursor invisível
