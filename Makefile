@@ -25,7 +25,7 @@ FREERTOS_SOURCE_FILES += ${FREERTOS_DIR}/Source/portable/ThirdParty/GCC/Posix/po
 
 
 CFLAGS := -ggdb3 -O0
-LDFLAGS := -ggdb3 -O0 -pthread -lpcap -lm
+LDFLAGS := -ggdb3 -O0 -pthread -lpcap
 
 OBJ_FILES := $(LOCAL_SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 OBJ_FILES += $(FREERTOS_SOURCE_FILES:$(FREERTOS_PATH)/%.c=$(BUILD_DIR)/%.o)

@@ -5,6 +5,10 @@
 #include "instrumentacao.h"
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void atualiza_valores_da_tela(int tempo);
 
 void inicializa_interface();
@@ -15,6 +19,8 @@ void erase_warning();
 
 void finalizar_programa(int number_of_blockedTasks, TaskHandle_t *blockedTaskHandle);
 
-void interpreta_escrita();
+#ifdef __cplusplus
+}
+#endif
 
 #endif

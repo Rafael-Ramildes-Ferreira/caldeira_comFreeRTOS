@@ -1,8 +1,5 @@
-/********** Code informaation **********/
-/**** Creation date: June 29, 2021 *****/
-/**** Developer: Alan Kunz Cechinel ****/
-/**** e-mail: cechinel.a.k@gmail.com ***/
-/***************************************/
+//####################  Implementação das threads  ####################//
+#include "list_of_tasks.h"
 
 /* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
@@ -10,20 +7,16 @@
 #include "semphr.h"
 
 /* Local includes. */
-#include "list_of_tasks.h"
 #include "console.h"
 #include "instrumentacao.h"
 #include "display.h"
 
 
-#define TEMPO_TOTAL 3//600	// Em segundos
+#define TEMPO_TOTAL 3600	// Em segundos
 
 // Executa pelo TEMPO_TOTAL
 #define executa_milli(intervalo) for(int milli_index = 0;milli_index<=TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
 
-
-/*used to control*/
-double ni, q, na, nf;
 
 /*  infos  */
 float R = 0.001;		// 0.001 Grau/(J/s)
@@ -170,10 +163,6 @@ void controla_nivel()
 
 void create_tasks()
 {
-	ni = .1;
-	q = .1;
-	na = .1;
-	nf = .1;
 	init_vars();
 	inicializa_interface();
 
