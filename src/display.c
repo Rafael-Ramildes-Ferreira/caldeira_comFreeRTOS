@@ -130,13 +130,16 @@ void erase_warning()
 
 
 /*---------- Finalização do programa ----------*/
-void finalizar_programa()
+void finalizar_programa(int number_of_blockedTasks, TaskHandle_t *blockedTaskHandle)
 {
 	instrumentacao_mutex_lock(mutex_scr);
 	console_print("\nPressione ENTER para finalizar . . .\n");
 	instrumentacao_mutex_unlock(mutex_scr);
 	
 	finalizar = true;
+
+	for(int i = 0; i < number_of_blockedTasks; i++)
+		xTaskNotifyGive(*(blockedTaskHandle+i));	// Para liberar o escuta alarme (nada é escrito na tela depois de o programa ter-se encerrado)
 }
 
 

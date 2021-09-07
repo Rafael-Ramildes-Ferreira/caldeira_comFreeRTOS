@@ -16,10 +16,10 @@
 #include "display.h"
 
 
-#define TEMPO_TOTAL 3600	// Em segundos
+#define TEMPO_TOTAL 3//600	// Em segundos
 
 // Executa pelo TEMPO_TOTAL
-#define executa_milli(intervalo) for(int milli_index = 0;milli_index<TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
+#define executa_milli(intervalo) for(int milli_index = 0;milli_index<=TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
 
 
 /*used to control*/
@@ -50,11 +50,11 @@ void monitora_temperatura()
 
 		if(le_sensor(&T) > limite_seguro)
 			xTaskNotifyGive(temp_alarme);
-
-		//console_print(";\n");
 	}
-	xTaskNotifyGive(temp_alarme);	// Para liberar o escuta alarme (nada é escrito na tela depois de o programa ter-se encerrado)
-	//console_print("Encerrou monitora_temperatura\n");		
+	//xTaskNotifyGive(temp_alarme);	// Para liberar o escuta alarme (nada é escrito na tela depois de o programa ter-se encerrado)
+
+	//console_print("Encerrou monitora_temperatura\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 void escuta_alarme()
@@ -75,19 +75,15 @@ void escuta_alarme()
 		vTaskDelayUntil(&xLastWakeTime,xTime);
 
 		erase_warning();
-	
-		//console_print("%lf\n",xTaskGetTickCount()*1e-3);
 	}
 	//console_print("Encerrou escuta_alarme\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 /*-----------  Sequências de impressão  ----------*/
 void imprime_dados()
 {
 	int index = 0;
-
-	/*  Imprime no terminal  */
-	inicializa_interface();
 	
 
 	/*  Prepara o relógio  */
@@ -102,8 +98,10 @@ void imprime_dados()
 		/*  Atualiza o terminal  */
 		atualiza_valores_da_tela(index++);
 	}
-	finalizar_programa();
+	finalizar_programa(1,&temp_alarme);
+
 	//console_print("Encerrou imprime_dados\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 /*-----------  Sequências de controle  ----------*/
@@ -134,10 +132,9 @@ void controla_temperatura()
 		/*  Envia a mensagem  */
 		aciona_atuador(&Q,u);
 		aciona_atuador(&Na,(u - le_atuador(&Q))/(S*(80-le_sensor(&T))));
-
-		//console_print(",\n");
 	}
 	//console_print("Encerrou controla_temperatura\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 
@@ -166,10 +163,9 @@ void controla_nivel()
 		/*  Envia mensagem  */
 		aciona_atuador(&Ni,u);
 		aciona_atuador(&Nf,-u);
-
-		//console_print(".\n");
 	}
 	//console_print("Encerrou controla_nivel\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 void create_tasks()
@@ -179,11 +175,12 @@ void create_tasks()
 	na = .1;
 	nf = .1;
 	init_vars();
+	inicializa_interface();
 
 	xTaskCreate(&controla_nivel, "Controle de nivel", 1024, NULL, 1, NULL);
 	xTaskCreate(&controla_temperatura, "Controle de temperatura", 1024, NULL, 1, NULL);
 	xTaskCreate(&imprime_dados, "Imprime dados na tela", 1024, NULL, 1, NULL);
-	xTaskCreate(&monitora_temperatura, "monitora a temperatura", 1024, NULL, 1, NULL);
+	xTaskCreate(&monitora_temperatura, "Monitora a temperatura", 1024, NULL, 1, NULL);
 	xTaskCreate(&escuta_alarme, "Imprime alarme na tela", 1024, NULL, 1, NULL);
 }
 

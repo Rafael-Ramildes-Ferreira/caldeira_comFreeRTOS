@@ -13,7 +13,7 @@ void print_warning(int valor);
 
 void erase_warning();
 
-void finalizar_programa();
+void finalizar_programa(int number_of_blockedTasks, TaskHandle_t *blockedTaskHandle);
 
 void interpreta_escrita();
 
