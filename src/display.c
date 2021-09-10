@@ -7,6 +7,8 @@
 #include "console.h"
 
 
+#define TAM_MEDIA 10
+
 #define false 0
 #define true  1
 
@@ -17,15 +19,30 @@ instrumentacao_mutex_t mutex_scr = NULL;
 int finalizar = false;
 
 
+double array_mean(int size, double array[], int consider_zero)
+{
+	double sum = 0;
+	int virtual_size = size;
+
+	for(int i = 0;i < size; i++)
+		if(array[i]!=0 || consider_zero)
+			sum += array[i];
+		else virtual_size--;
+
+	return sum/virtual_size;
+}
 
 /*-----------  Funções de impressão de saída  ----------*/
 void atualiza_valores_da_tela(int tempo)
 {
+	static double ultimas_temperaturas[TAM_MEDIA] = {0};
+	static int index_temp = 0;
+
 	instrumentacao_mutex_lock(mutex_scr);	
 	console_print("%s", ESC "[?25l");			// Cursor invisível
 
 	/*  Atualiza atuadores  */
-	console_print("%s", ESC "[6A"); 			// Sobe 8 linhas
+	console_print("%s", ESC "[8A"); 			// Sobe 8 linhas
 
 	console_print("%s", ESC "[7G"); 			// Anda 7 colunas para direita
 	if(!finalizar)
@@ -57,12 +74,17 @@ void atualiza_valores_da_tela(int tempo)
 	console_print("\n");					// Passa pra próxima linha
 	console_print("\n\n\n");
 
+	/*  Atualiza média móvel  */
+	ultimas_temperaturas[(index_temp++)%TAM_MEDIA] = le_sensor(&T);
+	if(!finalizar)
+		console_print("%s %lf\n\n", ESC "[27G", array_mean(TAM_MEDIA,ultimas_temperaturas,false));
+
 	/*  Atualiza tempo  */
 	int min = tempo/60;
 	if(!finalizar)
 		console_print("%s %02d:%02d\n", ESC "[6G",min, tempo - 60*min);
+	
 
-	//console_print("\n\n");
 	console_print("%s", ESC "[?25h");			// Cursor visível
 	instrumentacao_mutex_unlock(mutex_scr);
 }
@@ -88,6 +110,7 @@ void inicializa_interface()
 	console_print("\n\n");
 	console_print("--------------------------------------\n");
 
+	console_print("Média móvel da temperatura: \n\n");
 	console_print("Tempo   :  \n");
 
 	console_print("%s", ESC "[?25h");		// Cursor visível
@@ -100,7 +123,7 @@ void print_warning(int valor)
 {
 	instrumentacao_mutex_lock(mutex_scr);
 	console_print("%s", ESC "[?25l");		// Cursor invisível
-	console_print("%s", ESC "[8A");			// Sobe 10 linhas
+	console_print("%s", ESC "[10A");		// Sobe 10 linhas
 	console_print("%s", ESC "[1m");			// Põe em negrito
 	console_print("%s", ESC "[38;5;196m");		// Põe em vermelho
 	if(!finalizar){
@@ -108,7 +131,7 @@ void print_warning(int valor)
 		console_print("#### WARNING: Temperatura Acima Do Limite Seguro: %d C. !!!!!!",valor);
 	}
 	console_print("%s", ESC "[0m");			// Reseta estilo da escrita
-	console_print("\n\n\n\n\n\n\n\n");		// Desce todas as 10 linhas
+	console_print("\n\n\n\n\n\n\n\n\n\n");		// Desce todas as 10 linhas
 	console_print("%s", ESC "[?25h");		// Cursor visível
 	instrumentacao_mutex_unlock(mutex_scr);
 }
@@ -117,10 +140,10 @@ void erase_warning()
 {
 	instrumentacao_mutex_lock(mutex_scr);
 	console_print("%s", ESC "[?25l");		// Cursor invisível
-	console_print("%s", ESC "[8A");			// Sobe 10 linhas
+	console_print("%s", ESC "[10A");		// Sobe 10 linhas
 	if(!finalizar)
 		console_print("%s", ESC "[K");		// Limpa a linha
-	console_print("\n\n\n\n\n\n\n\n");		// Desce todas as 10 linhas
+	console_print("\n\n\n\n\n\n\n\n\n\n");		// Desce todas as 10 linhas
 	console_print("%s", ESC "[?25h");		// Cursor visível
 	instrumentacao_mutex_unlock(mutex_scr);
 }
