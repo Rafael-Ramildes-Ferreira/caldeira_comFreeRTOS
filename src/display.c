@@ -99,7 +99,7 @@ void tempo_levado(double time)
 	console_print("%s", ESC "[38G");	// Vai para a coluna 39
 	console_print("%s", ESC "[K");		// Limpa a linha
 	if(!finalizar)
-		console_print(" %02d:%02lf", min, sec);	// Imprime o tempo que levou
+		console_print(" %02d:%07.4lf", min, sec);	// Imprime o tempo que levou
 	console_print("\n\n\n");		// Desce as três linhas
 	instrumentacao_mutex_unlock(mutex_scr);
 }
@@ -131,8 +131,6 @@ void inicializa_interface()
 
 	console_print("%s", ESC "[?25h");		// Cursor visível
 	instrumentacao_mutex_unlock(mutex_scr);
-
-	//tempo_levado(12345.678);
 }
 
 
