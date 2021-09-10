@@ -4,6 +4,7 @@
 
 #include "instrumentacao.h"
 
+#define displayREF_PORCENT 5.0
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,6 +13,8 @@ extern "C" {
 void atualiza_valores_da_tela(int tempo);
 
 void inicializa_interface();
+
+void tempo_levado(double time);
 
 void print_warning(int valor);
 

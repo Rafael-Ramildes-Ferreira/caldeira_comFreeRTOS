@@ -24,6 +24,7 @@ int S = 4184;			// 4184 J/KgC
 
 /*  alarme  */
 TaskHandle_t temp_alarme;
+TaskHandle_t temp_porcent;
 
 /*  Configuração do alarme  */
 int limite_seguro = 30;		// 30C
@@ -37,15 +38,20 @@ void monitora_temperatura()
 	const TickType_t xTime = 10;
 	xLastWakeTime = xTaskGetTickCount();
 
+	double t;
+	double ref;
+
 
 	executa_milli(xTime){
 		vTaskDelayUntil(&xLastWakeTime, xTime);
 
-		if(le_sensor(&T) > limite_seguro)
+		t = le_sensor(&T);
+		if(t > limite_seguro)
 			xTaskNotifyGive(temp_alarme);
+		ref = le_referencia(&Tref);
+		if(t > ref - ref * displayREF_PORCENT/100)
+			xTaskNotifyGive(temp_porcent);
 	}
-	//xTaskNotifyGive(temp_alarme);	// Para liberar o escuta alarme (nada é escrito na tela depois de o programa ter-se encerrado)
-
 	//console_print("Encerrou monitora_temperatura\n");
 	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
@@ -70,6 +76,22 @@ void escuta_alarme()
 		erase_warning();
 	}
 	//console_print("Encerrou escuta_alarme\n");
+	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
+}
+
+void imprime_tempo_ate_porcent()
+{
+	temp_porcent = xTaskGetCurrentTaskHandle();
+
+	/*  Prepara o relógio  */
+	TickType_t xInitTime = xTaskGetTickCount();
+	TickType_t xEndTime;
+
+	/*  Espera ser avisado que o valor foi atingido  */
+	ulTaskNotifyTake(pdTRUE,portMAX_DELAY);
+	xEndTime = xTaskGetTickCount();
+	tempo_levado((xEndTime - xInitTime)*1e-3);
+
 	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
@@ -171,5 +193,6 @@ void create_tasks()
 	xTaskCreate(&imprime_dados, "Imprime dados na tela", 1024, NULL, 1, NULL);
 	xTaskCreate(&monitora_temperatura, "Monitora a temperatura", 1024, NULL, 1, NULL);
 	xTaskCreate(&escuta_alarme, "Imprime alarme na tela", 1024, NULL, 1, NULL);
+	xTaskCreate(&imprime_tempo_ate_porcent, "Imprime o tempo até que a temperatura esteja a N%% da referencia", 1024, NULL, 1, NULL);
 }
 

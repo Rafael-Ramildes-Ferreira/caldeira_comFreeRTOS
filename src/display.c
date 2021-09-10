@@ -62,7 +62,7 @@ void atualiza_valores_da_tela(int tempo)
 	console_print("\n");					// Passa pra próxima linha
 
 	/*  Atualiza sensores  */
-	console_print("%s", ESC "[4A");			// Sobe 4 linhas
+	console_print("%s", ESC "[4A");				// Sobe 4 linhas
 
 	console_print("%s", ESC "[28G");			// Anda 30 colunas para direita
 	if(!finalizar)
@@ -77,7 +77,7 @@ void atualiza_valores_da_tela(int tempo)
 	/*  Atualiza média móvel  */
 	ultimas_temperaturas[(index_temp++)%TAM_MEDIA] = le_sensor(&T);
 	if(!finalizar)
-		console_print("%s %lf\n\n", ESC "[27G", array_mean(TAM_MEDIA,ultimas_temperaturas,false));
+		console_print("\n%s %lf\n", ESC "[27G", array_mean(TAM_MEDIA,ultimas_temperaturas,false));
 
 	/*  Atualiza tempo  */
 	int min = tempo/60;
@@ -86,6 +86,21 @@ void atualiza_valores_da_tela(int tempo)
 	
 
 	console_print("%s", ESC "[?25h");			// Cursor visível
+	instrumentacao_mutex_unlock(mutex_scr);
+}
+
+void tempo_levado(double time)
+{
+	int min = time/60;
+	double sec = time - min*60;
+
+	instrumentacao_mutex_lock(mutex_scr);
+	console_print("%s", ESC "[3A");		// Sobe três linha
+	console_print("%s", ESC "[38G");	// Vai para a coluna 39
+	console_print("%s", ESC "[K");		// Limpa a linha
+	if(!finalizar)
+		console_print(" %02d:%02lf", min, sec);	// Imprime o tempo que levou
+	console_print("\n\n\n");		// Desce as três linhas
 	instrumentacao_mutex_unlock(mutex_scr);
 }
 
@@ -110,11 +125,14 @@ void inicializa_interface()
 	console_print("\n\n");
 	console_print("--------------------------------------\n");
 
-	console_print("Média móvel da temperatura: \n\n");
+	console_print("Tempo levado até %5.1f %% do set point: Ainda nao chegou a dada porcentagem\n",displayREF_PORCENT);
+	console_print("Média móvel da temperatura \n");
 	console_print("Tempo   :  \n");
 
 	console_print("%s", ESC "[?25h");		// Cursor visível
-	instrumentacao_mutex_unlock(mutex_scr);	
+	instrumentacao_mutex_unlock(mutex_scr);
+
+	//tempo_levado(12345.678);
 }
 
 
