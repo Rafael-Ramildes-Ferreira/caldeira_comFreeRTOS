@@ -62,7 +62,7 @@ void imprime_valore_na_tela(int tempo)
 	console_print("%s", ESC "[4A");			// Sobe 4 linhas				//#4->8
 
 	console_print("%sT = %09.6f\n", ESC "[24G", le_sensor(&T));		// Vai pra coluna 24	//#8->7
-	console_print("%sH = %09.6f\n", ESC "[24G", le_sensor(&T));		// Vai pra coluna 24	//#7->6
+	console_print("%sH = %09.6f\n", ESC "[24G", le_sensor(&H));		// Vai pra coluna 24	//#7->6
 	console_print("\n\n");										//#6->5->4
 	console_print("--------------------------------------\n");					//#4->3
 
