@@ -10,16 +10,33 @@
 extern "C" {
 #endif
 
-void atualiza_valores_da_tela(int tempo);
+void fast_inicializa_interface();
 
+void imprime_valore_na_tela(int tempo);
+
+void informa_tempo_levado(double time);
+
+void informa_alarme(int valor);
+
+void termina_alarme();
+
+
+//###############  DEPRICATED   ###############//
 void inicializa_interface();
 
+//###############  DEPRICATED   ###############//
+void atualiza_valores_da_tela(int tempo);
+
+//###############  DEPRICATED   ###############//
 void tempo_levado(double time);
 
+//###############  DEPRICATED   ###############//
 void print_warning(int valor);
 
+//###############  DEPRICATED   ###############//
 void erase_warning();
 
+//###############  DEPRICATED   ###############//
 void finalizar_programa(int number_of_blockedTasks, TaskHandle_t *blockedTaskHandle);
 
 #ifdef __cplusplus

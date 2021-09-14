@@ -12,11 +12,6 @@
 #include "display.h"
 
 
-#define TEMPO_TOTAL 3600	// Em segundos
-
-// Executa pelo TEMPO_TOTAL
-#define executa_milli(intervalo) for(int milli_index = 0;milli_index<=TEMPO_TOTAL/(intervalo*1e-3);milli_index++)
-
 
 /*  infos  */
 float R = 0.001;		// 0.001 Grau/(J/s)
@@ -42,7 +37,7 @@ void monitora_temperatura()
 	double ref;
 
 
-	executa_milli(xTime){
+	for(;;){
 		vTaskDelayUntil(&xLastWakeTime, xTime);
 
 		t = le_sensor(&T);
@@ -52,31 +47,18 @@ void monitora_temperatura()
 		if(t > ref - ref * displayREF_PORCENT/100)
 			xTaskNotifyGive(temp_porcent);
 	}
-	//console_print("Encerrou monitora_temperatura\n");
-	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 void escuta_alarme()
 {
 	temp_alarme = xTaskGetCurrentTaskHandle();
 
-	/*  Prepara o relógio  */
-	TickType_t xLastWakeTime;
-	const TickType_t xTime = 5;
 
-
-	while(xTaskGetTickCount()*1e-3 <= TEMPO_TOTAL){
+	for(;;){
 		ulTaskNotifyTake(pdTRUE,portMAX_DELAY);
-		xLastWakeTime = xTaskGetTickCount();
 		
-		print_warning(limite_seguro);
-
-		vTaskDelayUntil(&xLastWakeTime,xTime);
-
-		erase_warning();
+		informa_alarme(limite_seguro);
 	}
-	//console_print("Encerrou escuta_alarme\n");
-	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 void imprime_tempo_ate_porcent()
@@ -90,7 +72,7 @@ void imprime_tempo_ate_porcent()
 	/*  Espera ser avisado que o valor foi atingido  */
 	ulTaskNotifyTake(pdTRUE,portMAX_DELAY);
 	xEndTime = xTaskGetTickCount();
-	tempo_levado((xEndTime - xInitTime)*1e-3);
+	informa_tempo_levado((xEndTime - xInitTime)*1e-3);
 
 	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
@@ -107,16 +89,12 @@ void imprime_dados()
 	xLastWakeTime = xTaskGetTickCount();
 
 
-	executa_milli(xTime){
+	for(;;){
         	vTaskDelayUntil(&xLastWakeTime, xTime);
 
 		/*  Atualiza o terminal  */
-		atualiza_valores_da_tela(index++);
+		imprime_valore_na_tela(index++);
 	}
-	finalizar_programa(1,&temp_alarme);
-
-	//console_print("Encerrou imprime_dados\n");
-	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 /*-----------  Sequências de controle  ----------*/
@@ -137,7 +115,7 @@ void controla_temperatura()
 	xLastWakeTime = xTaskGetTickCount();
 
 
-	executa_milli(xTime){
+	for(;;){
         	vTaskDelayUntil(&xLastWakeTime, xTime);
 		
 		/*  Define a atuação  */
@@ -148,8 +126,6 @@ void controla_temperatura()
 		aciona_atuador(&Q,u);
 		aciona_atuador(&Na,(u - le_atuador(&Q))/(S*(80-le_sensor(&T))));
 	}
-	//console_print("Encerrou controla_temperatura\n");
-	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 
@@ -168,7 +144,7 @@ void controla_nivel()
 	xLastWakeTime = xTaskGetTickCount();
 
 
-	executa_milli(xTime){
+	for(;;){
         	vTaskDelayUntil(&xLastWakeTime, xTime);
 
 		/*  Define a atuação  */
@@ -179,14 +155,12 @@ void controla_nivel()
 		aciona_atuador(&Ni,u);
 		aciona_atuador(&Nf,-u);
 	}
-	//console_print("Encerrou controla_nivel\n");
-	vTaskDelete(xTaskGetCurrentTaskHandle());	// Task suicide
 }
 
 void create_tasks()
 {
 	init_vars();
-	inicializa_interface();
+	fast_inicializa_interface();
 
 	xTaskCreate(&controla_nivel, "Controle de nivel", 1024, NULL, 1, NULL);
 	xTaskCreate(&controla_temperatura, "Controle de temperatura", 1024, NULL, 1, NULL);
