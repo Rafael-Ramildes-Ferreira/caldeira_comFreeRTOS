@@ -162,11 +162,11 @@ void create_tasks()
 	init_vars();
 	fast_inicializa_interface();
 
-	xTaskCreate(&controla_nivel, "Controle de nivel", 1024, NULL, 1, NULL);
-	xTaskCreate(&controla_temperatura, "Controle de temperatura", 1024, NULL, 1, NULL);
-	xTaskCreate(&imprime_dados, "Imprime dados na tela", 1024, NULL, 1, NULL);
-	xTaskCreate(&monitora_temperatura, "Monitora a temperatura", 1024, NULL, 1, NULL);
 	xTaskCreate(&escuta_alarme, "Imprime alarme na tela", 1024, NULL, 1, NULL);
-	xTaskCreate(&imprime_tempo_ate_porcent, "Imprime o tempo até que a temperatura esteja a N%% da referencia", 1024, NULL, 1, NULL);
+	xTaskCreate(&monitora_temperatura, "Monitora a temperatura", 1024, NULL, 2, NULL);
+	xTaskCreate(&controla_temperatura, "Controle de temperatura", 1024, NULL, 3, NULL);
+	xTaskCreate(&controla_nivel, "Controle de nivel", 1024, NULL, 4, NULL);
+	xTaskCreate(&imprime_tempo_ate_porcent, "Imprime o tempo até que a temperatura esteja a N%% da referencia", 1024, NULL, 5, NULL);
+	xTaskCreate(&imprime_dados, "Imprime dados na tela", 1024, NULL, 6, NULL);
 }
 
